@@ -569,6 +569,22 @@ export default function Home() {
       <Navbar />
       <Hero />
       <WhatIsGloty />
+      {/* Lifestyle banner */}
+      <section className="relative h-[50vh] sm:h-[60vh] overflow-hidden">
+        <Image
+          src="/lifestyle.jpg"
+          alt="Preparando Gloty en la cocina"
+          fill
+          className="object-cover object-center"
+          quality={85}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-cream via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 text-center">
+          <p className="text-brand-charcoal font-display text-2xl sm:text-3xl italic">
+            Prepararlo es tan fácil como <span className="text-brand-orange">calentar y servir</span>
+          </p>
+        </div>
+      </section>
       <Benefits />
       <Ingredients />
       <FeedingGuide />
