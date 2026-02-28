@@ -1,22 +1,28 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 /* ─── Data ─── */
 const WHATSAPP = '5491150387441';
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Hola! Me interesa Gloty para mi perro 🐶')}`;
 
+const whatIsCards = [
+  { icon: '🚫', title: 'No es balanceado', desc: 'No es un ultraprocesado como las croquetas tradicionales.' },
+  { icon: '🍳', title: 'Es comida real', desc: 'Ingredientes que podés reconocer, cocidos con cariño.' },
+  { icon: '🩺', title: 'Avalado por profesionales', desc: 'Formulado por nutricionistas veterinarios.' },
+];
+
 const benefits = [
-  { icon: '🔥', title: 'Cocinado a baja temperatura', desc: 'Proceso de cocción suave que preserva todos los nutrientes naturales.' },
-  { icon: '🌿', title: '100% ingredientes naturales', desc: 'Solo ingredientes reales de alta calidad para el bienestar de tu mascota.' },
-  { icon: '🚫', title: 'Sin cereales', desc: 'Libre de granos para una digestión más natural y saludable.' },
-  { icon: '✨', title: 'Sin colorantes ni conservantes', desc: '100% libre de aditivos artificiales.' },
-  { icon: '💊', title: 'Vitaminas y minerales', desc: 'Fortificado con nutrientes esenciales para una salud óptima.' },
-  { icon: '🫁', title: 'Alta digestibilidad', desc: 'Fácil de digerir para una mejor absorción de nutrientes.' },
-  { icon: '💪', title: 'Completo y equilibrado', desc: 'Todos los nutrientes necesarios en las proporciones correctas.' },
-  { icon: '✨', title: 'Pelaje brillante', desc: 'Ácidos grasos esenciales para una piel sana y pelaje radiante.' },
-  { icon: '🍗', title: 'Saludable y nutritivo', desc: 'Nutrición completa y balanceada para cada etapa.' },
+  { icon: '🔥', title: 'Cocinado a baja temperatura', desc: 'Proceso de cocción suave que preserva todos los nutrientes.' },
+  { icon: '🌿', title: '100% natural', desc: 'Solo ingredientes reales de alta calidad.' },
+  { icon: '🚫', title: 'Sin cereales', desc: 'Libre de granos para una digestión natural.' },
+  { icon: '✨', title: 'Sin conservantes', desc: '100% libre de aditivos artificiales.' },
+  { icon: '💊', title: 'Vitaminas y minerales', desc: 'Nutrientes esenciales para una salud óptima.' },
+  { icon: '🫁', title: 'Alta digestibilidad', desc: 'Mejor absorción de nutrientes.' },
+  { icon: '💪', title: 'Completo y equilibrado', desc: 'Proporciones correctas de cada nutriente.' },
+  { icon: '✨', title: 'Pelaje brillante', desc: 'Ácidos grasos para piel sana y pelo radiante.' },
+  { icon: '🍗', title: 'Saludable y nutritivo', desc: 'Nutrición completa para cada etapa.' },
 ];
 
 const ingredients = [
@@ -28,7 +34,7 @@ const ingredients = [
   { name: 'Manzana deshidratada', pct: 1.3, emoji: '🍎', desc: 'Fibra natural para la digestión y equilibrio intestinal.' },
   { name: 'Almidón de papa', pct: 1.3, emoji: '🫙', desc: 'Textura suave y homogénea respetando el sabor natural.' },
   { name: 'Sustancias minerales', pct: 1.4, emoji: '💎', desc: 'Minerales esenciales para huesos, dientes y funciones vitales.' },
-  { name: 'Lino', pct: 0.9, emoji: '🌾', desc: 'Fibra dietaria para una digestión saludable y tránsito intestinal.' },
+  { name: 'Lino', pct: 0.9, emoji: '🌾', desc: 'Fibra dietaria para digestión saludable y tránsito intestinal.' },
 ];
 
 const feedingGuide = [
@@ -64,12 +70,36 @@ const vitamins = [
 
 const storageTips = [
   { icon: '❄️', title: 'Freezer', text: 'Mantené las raciones en el freezer.' },
-  { icon: '🌙', title: 'La noche anterior', text: 'Pasá la ración del día siguiente a la heladera la noche anterior.' },
-  { icon: '🌡️', title: 'Temperatura ambiente', text: 'Serví a temperatura ambiente. Si tu perro es exigente, podés templarlo un poco (¡pero no lo cocines de nuevo!)' },
-  { icon: '📅', title: 'Conservación', text: 'Una vez abierto, conservar en la heladera hasta 3 días.' },
+  { icon: '🌙', title: 'La noche anterior', text: 'Pasá la ración del día siguiente a la heladera.' },
+  { icon: '🌡️', title: 'Temperatura ambiente', text: 'Serví a temperatura ambiente. Podés templarlo un poco (¡pero no lo cocines de nuevo!)' },
+  { icon: '📅', title: 'Una vez abierto', text: 'Conservar en la heladera hasta 3 días.' },
 ];
 
-/* ─── WhatsApp SVG ─── */
+const macros = [
+  { label: 'Proteína bruta', value: '14%' },
+  { label: 'Grasa bruta', value: '7%' },
+  { label: 'Carbohidratos', value: '1.5%' },
+  { label: 'Humedad', value: '68–72%' },
+];
+
+/* ─── Hooks ─── */
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
+}
+
+/* ─── Icons ─── */
 function WhatsAppIcon({ className = 'w-5 h-5' }: { className?: string }) {
   return (
     <svg className={className} fill="currentColor" viewBox="0 0 24 24">
@@ -78,27 +108,63 @@ function WhatsAppIcon({ className = 'w-5 h-5' }: { className?: string }) {
   );
 }
 
+function ChevronDown({ className = 'w-4 h-4' }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    </svg>
+  );
+}
+
+/* ─── Section Label ─── */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-brand-orange font-semibold text-xs tracking-[0.2em] uppercase mb-4">{children}</p>
+  );
+}
+
 /* ─── Components ─── */
 
 function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-gray-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2">
-          <span className="text-2xl font-display text-brand-orange font-bold tracking-tight">Gloty</span>
-          <span className="text-[10px] text-brand-warm italic hidden sm:block">amor real, comida real</span>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white/90 backdrop-blur-xl shadow-sm' : 'bg-transparent'}`}>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-2.5">
+          <span className={`text-2xl font-display font-bold tracking-tight transition-colors duration-300 ${scrolled ? 'text-brand-orange' : 'text-white'}`}>
+            Gloty
+          </span>
+          <span className={`text-[10px] italic hidden sm:block transition-colors duration-300 ${scrolled ? 'text-brand-warm' : 'text-white/60'}`}>
+            amor real, comida real
+          </span>
         </a>
-        <div className="hidden md:flex items-center gap-8 text-[13px] font-medium text-gray-500">
-          <a href="#que-es" className="hover:text-brand-orange transition-colors duration-200">¿Qué es?</a>
-          <a href="#beneficios" className="hover:text-brand-orange transition-colors duration-200">Beneficios</a>
-          <a href="#ingredientes" className="hover:text-brand-orange transition-colors duration-200">Ingredientes</a>
-          <a href="#guia" className="hover:text-brand-orange transition-colors duration-200">Guía</a>
+        <div className="hidden md:flex items-center gap-8">
+          {[
+            ['#que-es', '¿Qué es?'],
+            ['#beneficios', 'Beneficios'],
+            ['#ingredientes', 'Ingredientes'],
+            ['#guia', 'Guía'],
+          ].map(([href, label]) => (
+            <a
+              key={href}
+              href={href}
+              className={`text-[13px] font-medium transition-colors duration-200 ${scrolled ? 'text-gray-500 hover:text-brand-orange' : 'text-white/70 hover:text-white'}`}
+            >
+              {label}
+            </a>
+          ))}
         </div>
         <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-[#25D366] hover:bg-[#20bd5a] text-white pl-3 pr-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2 transition-all duration-200 hover:shadow-lg hover:shadow-green-500/20"
+          className="bg-[#25D366] hover:bg-[#20bd5a] text-white pl-3 pr-4 py-2.5 rounded-full text-sm font-semibold flex items-center gap-2 transition-all duration-200 hover:shadow-lg hover:shadow-green-500/25 active:scale-95"
         >
           <WhatsAppIcon className="w-4 h-4" />
           <span className="hidden sm:inline">Pedí ahora</span>
@@ -111,51 +177,59 @@ function Navbar() {
 
 function Hero() {
   return (
-    <section className="relative min-h-screen flex items-end sm:items-center pt-16 overflow-hidden bg-brand-cream">
+    <section className="relative min-h-[100svh] flex items-end sm:items-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
           src="/hero-dog.jpg"
           alt="Golden retriever esperando su comida Gloty"
           fill
-          className="object-cover object-top"
+          className="object-cover object-[center_20%]"
           priority
           quality={90}
+          sizes="100vw"
         />
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 sm:bg-gradient-to-r sm:from-black/70 sm:via-black/40 sm:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/5 sm:bg-gradient-to-r sm:from-black/75 sm:via-black/30 sm:to-transparent" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-16 sm:pb-0 w-full">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 pb-20 sm:pb-0 w-full">
         <div className="max-w-xl">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-6 border border-white/10">
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-white/10">
             <span>🐾</span>
             <span>Alimento natural para perros</span>
           </div>
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-display text-white leading-[1.05] mb-5">
+          <h1 className="text-[3.25rem] sm:text-6xl md:text-7xl lg:text-8xl font-display text-white leading-[1.02] mb-6">
             Amor real,<br />
             <span className="text-brand-orange italic">comida real.</span>
           </h1>
-          <p className="text-lg sm:text-xl text-white/75 max-w-md mb-10 leading-relaxed">
+          <p className="text-base sm:text-lg text-white/65 max-w-md mb-10 leading-relaxed font-light">
             Formulado por nutricionistas veterinarios con ingredientes 100% naturales.
-            No es un balanceado — es <strong className="text-white">comida real</strong>.
+            No es un balanceado — es <strong className="text-white font-medium">comida real</strong>.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-brand-orange hover:bg-brand-orange-dark text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-2 transition-all duration-200 hover:scale-[1.02] shadow-xl shadow-brand-orange/30"
+              className="group bg-brand-orange hover:bg-brand-orange-dark text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-brand-orange/25 active:scale-[0.98]"
             >
-              Quiero Gloty 🧡
+              Quiero Gloty
+              <span className="group-hover:translate-x-0.5 transition-transform duration-200">🧡</span>
             </a>
             <a
               href="#que-es"
-              className="border-2 border-white/30 text-white px-8 py-4 rounded-full font-semibold text-lg text-center hover:bg-white/10 transition-all duration-200 backdrop-blur-sm"
+              className="border-2 border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg text-center hover:bg-white/10 transition-all duration-200 backdrop-blur-sm active:scale-[0.98]"
             >
               Conocé más ↓
             </a>
           </div>
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-white/30">
+        <div className="w-5 h-8 border-2 border-white/20 rounded-full flex justify-center pt-1.5">
+          <div className="w-1 h-2 bg-white/40 rounded-full animate-bounce" />
         </div>
       </div>
     </section>
@@ -163,61 +237,65 @@ function Hero() {
 }
 
 function WhatIsGloty() {
+  const { ref, visible } = useInView();
+
   return (
-    <section id="que-es" className="py-20 sm:py-28 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">¿Qué es Gloty?</p>
+    <section id="que-es" className="py-20 sm:py-32 bg-white" ref={ref}>
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="max-w-3xl mx-auto text-center mb-16 sm:mb-20">
+          <SectionLabel>¿Qué es Gloty?</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-6 leading-tight">
             No es balanceado.<br />
             Es <span className="text-brand-orange italic">comida real</span>.
           </h2>
-          <p className="text-base sm:text-lg text-gray-500 leading-relaxed max-w-2xl mx-auto">
-            Gloty es un alimento natural para perros, formulado por nutricionistas veterinarios
-            y elaborado con ingredientes reales aptos para consumo humano. Cocidos de manera suave
-            para preservar todos sus nutrientes.
+          <p className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
+            Alimento natural para perros, formulado por nutricionistas veterinarios
+            y elaborado con ingredientes reales aptos para consumo humano.
           </p>
         </div>
 
-        {/* Product photo + feature cards */}
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="relative mx-auto max-w-sm md:max-w-none">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-brand-charcoal/10">
-              <Image
-                src="/product.jpg"
-                alt="Gloty — Pollo & Vegetales, alimento cocido natural para perros, 400g"
-                width={600}
-                height={900}
-                className="w-full h-auto object-cover"
-                quality={90}
-              />
+        {/* Product + feature cards */}
+        <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="relative mx-auto max-w-xs sm:max-w-sm md:max-w-none">
+            <div className="relative">
+              {/* Decorative ring */}
+              <div className="absolute -inset-4 bg-gradient-to-br from-brand-orange/10 to-amber-100/30 rounded-[2rem] -rotate-3" />
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-brand-charcoal/15">
+                <Image
+                  src="/product.jpg"
+                  alt="Gloty — Pollo & Vegetales, 400g"
+                  width={600}
+                  height={900}
+                  className="w-full h-auto"
+                  quality={90}
+                />
+              </div>
             </div>
           </div>
-          <div className="space-y-4">
-            {[
-              { icon: '🚫', title: 'No es balanceado', desc: 'No es un ultraprocesado como las croquetas tradicionales.' },
-              { icon: '🍳', title: 'Es comida real', desc: 'Ingredientes que podés reconocer, cocidos con cariño.' },
-              { icon: '🩺', title: 'Avalado por profesionales', desc: 'Formulado por nutricionistas veterinarios.' },
-            ].map((item, i) => (
-              <div key={i} className="group bg-brand-cream rounded-2xl p-6 border border-brand-orange/0 hover:border-brand-orange/20 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/5 flex items-start gap-4">
-                <div className="text-3xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+
+          <div className="space-y-5">
+            {whatIsCards.map((item, i) => (
+              <div
+                key={i}
+                className="group bg-brand-cream/60 rounded-2xl p-5 sm:p-6 border border-transparent hover:border-brand-orange/15 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/5 flex items-start gap-4"
+                style={{ transitionDelay: `${i * 80}ms` }}
+              >
+                <div className="text-2xl sm:text-3xl flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-300">
+                  {item.icon}
+                </div>
                 <div>
-                  <h3 className="font-display text-lg mb-1 text-brand-charcoal">{item.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                  <h3 className="font-display text-lg sm:text-xl mb-1 text-brand-charcoal">{item.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
-            {/* Macro badges from packaging */}
-            <div className="grid grid-cols-4 gap-2 pt-2">
-              {[
-                { label: 'Proteína', value: '14%' },
-                { label: 'Grasa', value: '7%' },
-                { label: 'Carbos', value: '1.5%' },
-                { label: 'Humedad', value: '68-72%' },
-              ].map((m) => (
-                <div key={m.label} className="text-center bg-white rounded-xl p-3 border border-brand-orange/10">
-                  <div className="text-brand-orange font-bold text-lg">{m.value}</div>
-                  <div className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">{m.label}</div>
+
+            {/* Macro badges */}
+            <div className="grid grid-cols-4 gap-2 pt-3">
+              {macros.map((m) => (
+                <div key={m.label} className="text-center bg-white rounded-xl p-3 border border-gray-100 hover:border-brand-orange/20 transition-colors duration-200">
+                  <div className="text-brand-orange font-bold text-base sm:text-lg leading-tight">{m.value}</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 uppercase tracking-wider font-medium mt-0.5 leading-tight">{m.label}</div>
                 </div>
               ))}
             </div>
@@ -228,28 +306,56 @@ function WhatIsGloty() {
   );
 }
 
-function Benefits() {
+function LifestyleBanner() {
   return (
-    <section id="beneficios" className="py-20 sm:py-28 bg-brand-cream">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="relative h-[45vh] sm:h-[55vh] overflow-hidden">
+      <Image
+        src="/lifestyle.jpg"
+        alt="Preparando Gloty en la cocina"
+        fill
+        className="object-cover object-[center_30%]"
+        quality={85}
+        sizes="100vw"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-brand-cream via-black/10 to-black/20" />
+      <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-16">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-brand-charcoal/90 font-display text-2xl sm:text-4xl italic leading-snug">
+            Prepararlo es tan fácil<br className="hidden sm:block" /> como{' '}
+            <span className="text-brand-orange">calentar y servir</span>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Benefits() {
+  const { ref, visible } = useInView();
+
+  return (
+    <section id="beneficios" className="py-20 sm:py-32 bg-brand-cream" ref={ref}>
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         <div className="text-center mb-16">
-          <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">Beneficios</p>
+          <SectionLabel>Beneficios</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-4">
             ¿Por qué <span className="text-brand-orange">Gloty</span>?
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
+          <p className="text-gray-400 max-w-lg mx-auto">
             Cada ingrediente tiene un propósito. Cada decisión, un fundamento.
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {benefits.map((b, i) => (
             <div
               key={i}
-              className="group bg-white rounded-2xl p-6 hover:shadow-xl hover:shadow-brand-orange/5 transition-all duration-300 border border-gray-100 hover:border-brand-orange/20"
+              className="group bg-white rounded-2xl p-5 sm:p-6 hover:shadow-xl hover:shadow-brand-orange/5 transition-all duration-300 border border-gray-100/80 hover:border-brand-orange/15"
             >
-              <span className="text-2xl block mb-3 group-hover:scale-110 transition-transform duration-300 w-12 h-12 bg-brand-orange/10 rounded-xl flex items-center justify-center">{b.icon}</span>
-              <h3 className="font-semibold text-brand-charcoal mb-1.5 text-[15px]">{b.title}</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">{b.desc}</p>
+              <div className="w-11 h-11 bg-gradient-to-br from-brand-orange/10 to-amber-50 rounded-xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-300">
+                <span className="text-xl">{b.icon}</span>
+              </div>
+              <h3 className="font-semibold text-brand-charcoal mb-1 text-[15px]">{b.title}</h3>
+              <p className="text-sm text-gray-400 leading-relaxed">{b.desc}</p>
             </div>
           ))}
         </div>
@@ -261,117 +367,111 @@ function Benefits() {
 function Ingredients() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [showNutrition, setShowNutrition] = useState(false);
-
+  const { ref, visible } = useInView();
   const maxPct = ingredients[0].pct;
 
   return (
-    <section id="ingredientes" className="py-20 sm:py-28 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-12">
-          <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">Receta única</p>
+    <section id="ingredientes" className="py-20 sm:py-32 bg-white" ref={ref}>
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+        <div className="text-center mb-12 sm:mb-16">
+          <SectionLabel>Receta única</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-4">
             Pollo y vegetales
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
+          <p className="text-gray-400 max-w-xl mx-auto">
             Cada ingrediente elegido con un propósito nutricional específico.
           </p>
         </div>
 
-        {/* Hero ingredients photo */}
-        <div className="max-w-4xl mx-auto mb-12">
-          <div className="relative rounded-3xl overflow-hidden shadow-xl shadow-brand-orange/10">
+        {/* Ingredients photo */}
+        <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
+          <div className="relative rounded-3xl overflow-hidden shadow-xl shadow-brand-charcoal/8">
             <Image
               src="/ingredients.jpg"
-              alt="Ingredientes naturales de Gloty: pollo, zanahoria, calabaza, papa, aceite, manzana deshidratada"
+              alt="Ingredientes naturales de Gloty"
               width={1200}
               height={600}
-              className="w-full h-auto object-cover"
+              className="w-full h-auto"
               quality={90}
             />
+            {/* Subtle overlay at bottom for blend */}
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/30 to-transparent" />
           </div>
         </div>
 
-        {/* Compact ingredient list */}
-        <div className="max-w-3xl mx-auto space-y-2 mb-8">
+        {/* Ingredient list */}
+        <div className="max-w-3xl mx-auto space-y-1.5 mb-8">
           {ingredients.map((ing, i) => {
             const isExpanded = expanded === i;
             return (
               <button
                 key={i}
                 onClick={() => setExpanded(isExpanded ? null : i)}
-                className={`w-full text-left rounded-xl px-4 py-3 transition-all duration-200 ${isExpanded ? 'bg-brand-cream border border-brand-orange/20' : 'bg-gray-50 hover:bg-brand-cream border border-transparent'}`}
+                className={`w-full text-left rounded-xl px-4 py-3.5 transition-all duration-200 ${isExpanded ? 'bg-brand-cream border border-brand-orange/15 shadow-sm' : 'bg-gray-50/70 hover:bg-brand-cream/50 border border-transparent'}`}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-xl flex-shrink-0">{ing.emoji}</span>
+                  <span className="text-lg flex-shrink-0 w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm text-sm">
+                    {ing.emoji}
+                  </span>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2">
                       <span className="font-semibold text-brand-charcoal text-sm">{ing.name}</span>
-                      <span className="text-brand-orange font-bold text-sm">{ing.pct}%</span>
-                      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden ml-1">
+                      <span className="text-brand-orange font-bold text-xs tabular-nums">{ing.pct}%</span>
+                      <div className="flex-1 h-1 bg-gray-200/80 rounded-full overflow-hidden ml-1">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-light"
+                          className="h-full rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-light transition-all duration-500"
                           style={{ width: `${(ing.pct / maxPct) * 100}%` }}
                         />
                       </div>
                     </div>
                     {isExpanded && (
-                      <div className="animate-fade-in">
+                      <div className="mt-2 animate-fade-in">
                         <p className="text-xs text-gray-500 leading-relaxed">{ing.desc}</p>
                         {ing.detail && (
-                          <p className="mt-1 text-xs text-brand-orange/70 italic">Composición: {ing.detail}</p>
+                          <p className="mt-1 text-[11px] text-brand-orange/60 italic">Composición: {ing.detail}</p>
                         )}
                       </div>
                     )}
                   </div>
-                  <svg
-                    className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  <ChevronDown className={`w-3.5 h-3.5 text-gray-300 flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180 text-brand-orange' : ''}`} />
                 </div>
               </button>
             );
           })}
         </div>
 
-        {/* Nutritional tables */}
+        {/* Nutritional table toggle */}
         <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setShowNutrition(!showNutrition)}
-            className="w-full bg-brand-cream rounded-xl p-4 flex items-center justify-between hover:bg-brand-cream-dark/50 transition-colors duration-200 border border-brand-orange/5"
+            className="w-full bg-gray-50 hover:bg-brand-cream/60 rounded-xl p-4 flex items-center justify-between transition-colors duration-200 border border-gray-100"
           >
             <span className="font-semibold text-brand-charcoal text-sm flex items-center gap-2">
               📊 Tabla nutricional completa
             </span>
-            <svg
-              className={`w-4 h-4 text-brand-orange transition-transform duration-300 ${showNutrition ? 'rotate-180' : ''}`}
-              fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            <ChevronDown className={`w-4 h-4 text-brand-orange transition-transform duration-300 ${showNutrition ? 'rotate-180' : ''}`} />
           </button>
 
           {showNutrition && (
-            <div className="mt-2 bg-brand-cream rounded-xl p-5 sm:p-8 border border-brand-orange/5 grid sm:grid-cols-2 gap-8 animate-fade-in">
+            <div className="mt-2 bg-brand-cream/50 rounded-xl p-5 sm:p-8 border border-gray-100 grid sm:grid-cols-2 gap-8 animate-fade-in">
               <div>
                 <h4 className="font-display text-lg text-brand-charcoal mb-4">Minerales por kg</h4>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {minerals.map(([name, val]) => (
-                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark/60 last:border-0">
+                    <div key={name} className="flex justify-between text-sm py-2 border-b border-gray-200/50 last:border-0">
                       <span className="text-gray-500">{name}</span>
-                      <span className="font-semibold text-brand-charcoal">{val}</span>
+                      <span className="font-semibold text-brand-charcoal tabular-nums">{val}</span>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
                 <h4 className="font-display text-lg text-brand-charcoal mb-4">Vitaminas por kg</h4>
-                <div className="space-y-1">
+                <div className="space-y-0.5">
                   {vitamins.map(([name, val]) => (
-                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark/60 last:border-0">
+                    <div key={name} className="flex justify-between text-sm py-2 border-b border-gray-200/50 last:border-0">
                       <span className="text-gray-500">{name}</span>
-                      <span className="font-semibold text-brand-charcoal">{val}</span>
+                      <span className="font-semibold text-brand-charcoal tabular-nums">{val}</span>
                     </div>
                   ))}
                 </div>
@@ -385,33 +485,35 @@ function Ingredients() {
 }
 
 function FeedingGuide() {
+  const { ref, visible } = useInView();
+
   return (
-    <section id="guia" className="py-20 sm:py-28 bg-brand-cream">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="guia" className="py-20 sm:py-32 bg-brand-cream" ref={ref}>
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         <div className="text-center mb-16">
-          <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">Guía</p>
+          <SectionLabel>Guía</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-4">
             Alimentación y <span className="text-brand-orange">dosificación</span>
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            La ración diaria recomendada es aproximadamente el 2% al 4% del peso corporal.
-            Son valores estimativos que deben ajustarse según el nivel de actividad.
+          <p className="text-gray-400 max-w-lg mx-auto">
+            La ración diaria es aproximadamente el 2% al 4% del peso corporal,
+            ajustada según el nivel de actividad.
           </p>
         </div>
 
         {/* Feeding table */}
-        <div className="max-w-md mx-auto mb-20">
-          <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
-            <div className="bg-gradient-to-r from-brand-orange to-brand-orange-dark text-white p-5 text-center">
-              <h3 className="font-display text-xl">Cantidad diaria recomendada</h3>
+        <div className="max-w-md mx-auto mb-24">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-lg shadow-brand-charcoal/5 border border-gray-100">
+            <div className="bg-gradient-to-r from-brand-orange to-brand-orange-dark text-white p-6 text-center">
+              <h3 className="font-display text-xl sm:text-2xl">Cantidad diaria recomendada</h3>
             </div>
             <div className="divide-y divide-gray-50">
-              <div className="grid grid-cols-2 px-6 py-3 bg-gray-50 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                <span>🐕 Peso</span>
-                <span className="text-right">🍽️ Consumo diario</span>
+              <div className="grid grid-cols-2 px-6 py-3 bg-gray-50/50 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+                <span>Peso del perro</span>
+                <span className="text-right">Consumo diario</span>
               </div>
-              {feedingGuide.map((row) => (
-                <div key={row.weight} className="grid grid-cols-2 px-6 py-4 hover:bg-brand-orange/3 transition-colors duration-200">
+              {feedingGuide.map((row, i) => (
+                <div key={row.weight} className="grid grid-cols-2 px-6 py-4 hover:bg-brand-orange/3 transition-colors duration-150">
                   <span className="text-brand-charcoal font-medium">{row.weight} kg</span>
                   <span className="text-right text-brand-orange font-bold text-lg">{row.grams} g</span>
                 </div>
@@ -422,50 +524,54 @@ function FeedingGuide() {
 
         {/* Transition plan */}
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-12">
             <h3 className="text-2xl sm:text-3xl font-display text-brand-charcoal mb-3">
               ¿Cómo empezar?
             </h3>
-            <p className="text-gray-500 text-sm max-w-lg mx-auto">
-              El estómago de tu perro necesita adaptarse al cambio de &ldquo;comida procesada&rdquo; a &ldquo;comida real&rdquo;.
-              Recomendamos este plan de 7 días para una transición gradual.
+            <p className="text-gray-400 text-sm max-w-md mx-auto">
+              Recomendamos este plan de 7 días para una transición gradual de &ldquo;comida procesada&rdquo; a &ldquo;comida real&rdquo;.
             </p>
           </div>
 
-          {/* Transition visual — bowls-inspired circles */}
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-3 mb-6">
+          {/* Bowl circles */}
+          <div className="grid grid-cols-7 gap-1 sm:gap-3 mb-8">
             {transitionDays.map((d) => (
-              <div key={d.day} className="text-center">
-                <div className="text-[10px] sm:text-xs font-bold text-brand-orange mb-2">
+              <div key={d.day} className="text-center group">
+                <div className="text-[10px] sm:text-xs font-bold text-brand-orange mb-2 sm:mb-3">
                   Día {d.day}
                 </div>
-                {/* Bowl circle */}
-                <div className="relative aspect-square mx-auto w-full max-w-[72px]">
-                  <div className="absolute inset-0 rounded-full border-2 border-gray-200 bg-gray-100 overflow-hidden">
-                    {/* Gloty portion — fills from bottom */}
+                <div className="relative aspect-square mx-auto w-full max-w-[80px]">
+                  {/* Bowl shadow */}
+                  <div className="absolute inset-1 rounded-full bg-gray-200/50 blur-sm translate-y-1" />
+                  {/* Bowl */}
+                  <div className="absolute inset-0 rounded-full border-[3px] border-gray-300/60 bg-gray-100 overflow-hidden shadow-inner">
+                    {/* Gloty portion */}
                     <div
-                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-orange to-brand-orange-light transition-all duration-500 rounded-b-full"
+                      className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-orange via-brand-orange to-brand-orange-light transition-all duration-700 ease-out"
                       style={{ height: `${d.pct}%` }}
                     />
-                    {/* Old food portion */}
-                    <div
-                      className="absolute top-0 left-0 right-0 bg-gradient-to-b from-amber-800/40 to-amber-700/30 transition-all duration-500"
-                      style={{ height: `${100 - d.pct}%` }}
-                    />
+                    {/* Old food */}
+                    {d.pct < 100 && (
+                      <div
+                        className="absolute top-0 left-0 right-0 bg-gradient-to-b from-amber-800/30 to-amber-700/20"
+                        style={{ height: `${100 - d.pct}%` }}
+                      />
+                    )}
                   </div>
                 </div>
-                <div className="mt-2 text-[10px] sm:text-xs font-semibold text-brand-charcoal">
+                <div className="mt-2 sm:mt-3 text-[10px] sm:text-xs font-bold text-brand-charcoal">
                   {d.pct}%
                 </div>
+                <div className="text-[8px] sm:text-[10px] text-gray-400 font-medium">Gloty</div>
               </div>
             ))}
           </div>
 
           <div className="flex justify-center gap-6 text-xs text-gray-400">
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 bg-amber-800/40 rounded-full" /> Anterior
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 bg-amber-800/25 rounded-full border border-amber-800/20" /> Alimento anterior
             </span>
-            <span className="flex items-center gap-1.5">
+            <span className="flex items-center gap-2">
               <span className="w-3 h-3 bg-brand-orange rounded-full" /> Gloty
             </span>
           </div>
@@ -476,38 +582,52 @@ function FeedingGuide() {
 }
 
 function Storage() {
+  const { ref, visible } = useInView();
+
   return (
-    <section className="py-20 sm:py-28 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section className="py-20 sm:py-32 bg-white" ref={ref}>
+      <div className={`max-w-6xl mx-auto px-4 sm:px-6 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         <div className="text-center mb-16">
-          <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">Conservación</p>
+          <SectionLabel>Conservación</SectionLabel>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-4">
             Manejo y <span className="text-brand-orange">conservación</span>
           </h2>
-          <p className="text-gray-500 max-w-lg mx-auto text-sm">
+          <p className="text-gray-400 max-w-lg mx-auto text-sm">
             Al ser un producto sin conservantes, es importante cuidar la cadena de frío.
           </p>
         </div>
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Photo */}
-          <div className="relative rounded-3xl overflow-hidden shadow-xl shadow-brand-charcoal/10 mx-auto max-w-sm md:max-w-none">
-            <Image
-              src="/storage.jpg"
-              alt="Conservación de Gloty en la heladera"
-              width={600}
-              height={900}
-              className="w-full h-auto object-cover"
-              quality={90}
-            />
+          <div className="relative mx-auto max-w-xs sm:max-w-sm md:max-w-none order-2 md:order-1">
+            <div className="relative">
+              <div className="absolute -inset-3 bg-gradient-to-br from-blue-50 to-brand-cream rounded-[2rem] rotate-2" />
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-brand-charcoal/10">
+                <Image
+                  src="/storage.jpg"
+                  alt="Conservación de Gloty en la heladera"
+                  width={600}
+                  height={900}
+                  className="w-full h-auto"
+                  quality={90}
+                />
+              </div>
+            </div>
           </div>
+
           {/* Tips */}
-          <div className="space-y-4">
+          <div className="space-y-3 order-1 md:order-2">
             {storageTips.map((tip, i) => (
-              <div key={i} className="bg-brand-cream rounded-2xl p-5 flex gap-4 items-start border border-brand-orange/5 hover:border-brand-orange/15 transition-colors duration-200">
-                <span className="text-2xl flex-shrink-0 w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">{tip.icon}</span>
+              <div
+                key={i}
+                className="bg-brand-cream/60 rounded-2xl p-5 flex gap-4 items-start border border-transparent hover:border-brand-orange/10 transition-all duration-200 hover:shadow-md hover:shadow-brand-orange/3"
+              >
+                <span className="text-2xl flex-shrink-0 w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                  {tip.icon}
+                </span>
                 <div>
-                  <h4 className="font-semibold text-brand-charcoal text-sm mb-1">{tip.title}</h4>
-                  <p className="text-sm text-gray-500 leading-relaxed">{tip.text}</p>
+                  <h4 className="font-semibold text-brand-charcoal text-sm mb-0.5">{tip.title}</h4>
+                  <p className="text-sm text-gray-400 leading-relaxed">{tip.text}</p>
                 </div>
               </div>
             ))}
@@ -520,27 +640,26 @@ function Storage() {
 
 function CTA() {
   return (
-    <section className="relative py-24 sm:py-32 overflow-hidden">
-      {/* Background */}
+    <section className="relative py-28 sm:py-36 overflow-hidden">
       <div className="absolute inset-0 bg-brand-charcoal" />
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-orange/20 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-brand-orange/10 rounded-full blur-[100px]" />
+      <div className="absolute inset-0">
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand-orange/8 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-brand-orange/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <div className="text-7xl mb-8">🐾</div>
+        <div className="text-6xl sm:text-7xl mb-8 animate-float">🐾</div>
         <h2 className="text-4xl sm:text-5xl md:text-6xl font-display text-white mb-5 leading-tight">
           Dale lo <span className="text-brand-orange italic">mejor</span>
         </h2>
-        <p className="text-white/50 mb-12 text-lg max-w-md mx-auto leading-relaxed">
+        <p className="text-white/40 mb-12 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
           Tu perro merece comida real. Escribinos por WhatsApp y empezá hoy.
         </p>
         <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white px-10 py-5 rounded-full font-bold text-xl transition-all duration-200 hover:scale-[1.02] shadow-2xl shadow-green-500/30"
+          className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white px-10 py-5 rounded-full font-bold text-lg sm:text-xl transition-all duration-200 hover:scale-[1.02] shadow-2xl shadow-green-500/25 active:scale-[0.98]"
         >
           <WhatsAppIcon className="w-6 h-6" />
           Escribinos por WhatsApp
@@ -553,10 +672,19 @@ function CTA() {
 function Footer() {
   return (
     <footer className="bg-brand-charcoal border-t border-white/5 py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
-        <p className="text-white/30 text-sm">
-          © {new Date().getFullYear()} <span className="text-brand-orange/80 font-display">Gloty</span> — Amor real, comida real.
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-white/25 text-sm">
+          © {new Date().getFullYear()} <span className="text-brand-orange/60 font-display">Gloty</span>
         </p>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white/25 hover:text-white/50 text-sm transition-colors flex items-center gap-1.5"
+        >
+          <WhatsAppIcon className="w-3.5 h-3.5" />
+          +54 9 11 5038-7441
+        </a>
       </div>
     </footer>
   );
@@ -569,22 +697,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <WhatIsGloty />
-      {/* Lifestyle banner */}
-      <section className="relative h-[50vh] sm:h-[60vh] overflow-hidden">
-        <Image
-          src="/lifestyle.jpg"
-          alt="Preparando Gloty en la cocina"
-          fill
-          className="object-cover object-center"
-          quality={85}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-cream via-transparent to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 text-center">
-          <p className="text-brand-charcoal font-display text-2xl sm:text-3xl italic">
-            Prepararlo es tan fácil como <span className="text-brand-orange">calentar y servir</span>
-          </p>
-        </div>
-      </section>
+      <LifestyleBanner />
       <Benefits />
       <Ingredients />
       <FeedingGuide />
@@ -597,7 +710,7 @@ export default function Home() {
         href={WHATSAPP_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-2xl shadow-green-500/30 hover:scale-110 transition-all duration-200"
+        className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-2xl shadow-green-500/30 hover:scale-110 transition-all duration-200 active:scale-95"
         aria-label="WhatsApp"
       >
         <WhatsAppIcon className="w-7 h-7" />
