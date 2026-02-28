@@ -231,13 +231,12 @@ function Ingredients() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [showNutrition, setShowNutrition] = useState(false);
 
-  // Calculate max for bar scaling
   const maxPct = ingredients[0].pct;
 
   return (
     <section id="ingredientes" className="py-20 sm:py-28 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <p className="text-brand-orange font-semibold text-sm tracking-wider uppercase mb-3">Receta única</p>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-display text-brand-charcoal mb-4">
             Pollo y vegetales
@@ -247,61 +246,75 @@ function Ingredients() {
           </p>
         </div>
 
-        {/* Ingredient grid - 2 cols on mobile, matching PDF style */}
-        <div className="max-w-4xl mx-auto grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+        {/* Hero ingredients photo */}
+        <div className="max-w-4xl mx-auto mb-12">
+          <div className="relative rounded-3xl overflow-hidden shadow-xl shadow-brand-orange/10">
+            <Image
+              src="/ingredients.jpg"
+              alt="Ingredientes naturales de Gloty: pollo, zanahoria, calabaza, papa, aceite, manzana deshidratada"
+              width={1200}
+              height={600}
+              className="w-full h-auto object-cover"
+              quality={90}
+            />
+          </div>
+        </div>
+
+        {/* Compact ingredient list */}
+        <div className="max-w-3xl mx-auto space-y-2 mb-8">
           {ingredients.map((ing, i) => {
             const isExpanded = expanded === i;
-            const isLast = i === ingredients.length - 1;
             return (
-              <div
+              <button
                 key={i}
-                className={`${isLast && ingredients.length % 2 !== 0 ? 'col-span-2 max-w-[50%] mx-auto' : ''}`}
+                onClick={() => setExpanded(isExpanded ? null : i)}
+                className={`w-full text-left rounded-xl px-4 py-3 transition-all duration-200 ${isExpanded ? 'bg-brand-cream border border-brand-orange/20' : 'bg-gray-50 hover:bg-brand-cream border border-transparent'}`}
               >
-                <button
-                  onClick={() => setExpanded(isExpanded ? null : i)}
-                  className={`w-full text-left bg-brand-cream rounded-2xl p-4 sm:p-5 border-2 transition-all duration-300 ${isExpanded ? 'border-brand-orange/30 shadow-lg shadow-brand-orange/5' : 'border-transparent hover:border-brand-orange/10 hover:shadow-md'}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl sm:text-4xl flex-shrink-0">{ing.emoji}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2 mb-1">
-                        <span className="font-bold text-brand-charcoal text-sm sm:text-base truncate">{ing.name}</span>
-                        <span className="text-brand-orange font-bold text-lg sm:text-xl flex-shrink-0">{ing.pct}%</span>
-                      </div>
-                      {/* Percentage bar */}
-                      <div className="w-full bg-brand-cream-dark rounded-full h-2 overflow-hidden mb-2">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl flex-shrink-0">{ing.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-semibold text-brand-charcoal text-sm">{ing.name}</span>
+                      <span className="text-brand-orange font-bold text-sm">{ing.pct}%</span>
+                      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden ml-1">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-light transition-all duration-700"
+                          className="h-full rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-light"
                           style={{ width: `${(ing.pct / maxPct) * 100}%` }}
                         />
                       </div>
-                      <p className={`text-xs text-gray-500 leading-relaxed transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
-                        {ing.desc}
-                      </p>
-                      {isExpanded && ing.detail && (
-                        <p className="mt-1.5 text-xs text-brand-orange/70 italic">
-                          Composición: {ing.detail}
-                        </p>
-                      )}
                     </div>
+                    {isExpanded && (
+                      <div className="animate-fade-in">
+                        <p className="text-xs text-gray-500 leading-relaxed">{ing.desc}</p>
+                        {ing.detail && (
+                          <p className="mt-1 text-xs text-brand-orange/70 italic">Composición: {ing.detail}</p>
+                        )}
+                      </div>
+                    )}
                   </div>
-                </button>
-              </div>
+                  <svg
+                    className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </button>
             );
           })}
         </div>
 
         {/* Nutritional tables */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <button
             onClick={() => setShowNutrition(!showNutrition)}
-            className="w-full bg-brand-cream rounded-2xl p-5 flex items-center justify-between hover:bg-brand-cream-dark/50 transition-colors duration-200 border border-brand-orange/5"
+            className="w-full bg-brand-cream rounded-xl p-4 flex items-center justify-between hover:bg-brand-cream-dark/50 transition-colors duration-200 border border-brand-orange/5"
           >
-            <span className="font-semibold text-brand-charcoal flex items-center gap-2">
+            <span className="font-semibold text-brand-charcoal text-sm flex items-center gap-2">
               📊 Tabla nutricional completa
             </span>
             <svg
-              className={`w-5 h-5 text-brand-orange transition-transform duration-300 ${showNutrition ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-brand-orange transition-transform duration-300 ${showNutrition ? 'rotate-180' : ''}`}
               fill="none" viewBox="0 0 24 24" stroke="currentColor"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -309,13 +322,13 @@ function Ingredients() {
           </button>
 
           {showNutrition && (
-            <div className="mt-3 bg-brand-cream rounded-2xl p-5 sm:p-8 border border-brand-orange/5 grid sm:grid-cols-2 gap-8 animate-fade-in">
+            <div className="mt-2 bg-brand-cream rounded-xl p-5 sm:p-8 border border-brand-orange/5 grid sm:grid-cols-2 gap-8 animate-fade-in">
               <div>
                 <h4 className="font-display text-lg text-brand-charcoal mb-4">Minerales por kg</h4>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {minerals.map(([name, val]) => (
-                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark last:border-0">
-                      <span className="text-gray-600">{name}</span>
+                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark/60 last:border-0">
+                      <span className="text-gray-500">{name}</span>
                       <span className="font-semibold text-brand-charcoal">{val}</span>
                     </div>
                   ))}
@@ -323,10 +336,10 @@ function Ingredients() {
               </div>
               <div>
                 <h4 className="font-display text-lg text-brand-charcoal mb-4">Vitaminas por kg</h4>
-                <div className="space-y-2">
+                <div className="space-y-1">
                   {vitamins.map(([name, val]) => (
-                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark last:border-0">
-                      <span className="text-gray-600">{name}</span>
+                    <div key={name} className="flex justify-between text-sm py-1.5 border-b border-brand-cream-dark/60 last:border-0">
+                      <span className="text-gray-500">{name}</span>
                       <span className="font-semibold text-brand-charcoal">{val}</span>
                     </div>
                   ))}
