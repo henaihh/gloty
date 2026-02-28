@@ -488,16 +488,30 @@ function Storage() {
             Al ser un producto sin conservantes, es importante cuidar la cadena de frío.
           </p>
         </div>
-        <div className="max-w-2xl mx-auto grid sm:grid-cols-2 gap-4">
-          {storageTips.map((tip, i) => (
-            <div key={i} className="bg-brand-cream rounded-2xl p-6 flex gap-4 items-start border border-brand-orange/5 hover:border-brand-orange/15 transition-colors duration-200">
-              <span className="text-3xl flex-shrink-0 w-14 h-14 bg-white rounded-xl flex items-center justify-center shadow-sm">{tip.icon}</span>
-              <div>
-                <h4 className="font-semibold text-brand-charcoal text-sm mb-1">{tip.title}</h4>
-                <p className="text-sm text-gray-500 leading-relaxed">{tip.text}</p>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center">
+          {/* Photo */}
+          <div className="relative rounded-3xl overflow-hidden shadow-xl shadow-brand-charcoal/10 mx-auto max-w-sm md:max-w-none">
+            <Image
+              src="/storage.jpg"
+              alt="Conservación de Gloty en la heladera"
+              width={600}
+              height={900}
+              className="w-full h-auto object-cover"
+              quality={90}
+            />
+          </div>
+          {/* Tips */}
+          <div className="space-y-4">
+            {storageTips.map((tip, i) => (
+              <div key={i} className="bg-brand-cream rounded-2xl p-5 flex gap-4 items-start border border-brand-orange/5 hover:border-brand-orange/15 transition-colors duration-200">
+                <span className="text-2xl flex-shrink-0 w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">{tip.icon}</span>
+                <div>
+                  <h4 className="font-semibold text-brand-charcoal text-sm mb-1">{tip.title}</h4>
+                  <p className="text-sm text-gray-500 leading-relaxed">{tip.text}</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
