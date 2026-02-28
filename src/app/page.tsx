@@ -206,23 +206,12 @@ function Hero() {
             Formulado por nutricionistas veterinarios con ingredientes 100% naturales.
             No es un balanceado — es <strong className="text-white font-medium">comida real</strong>.
           </p>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group bg-brand-orange hover:bg-brand-orange-dark text-white px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-brand-orange/25 active:scale-[0.98]"
-            >
-              Quiero Gloty
-              <span className="group-hover:translate-x-0.5 transition-transform duration-200">🧡</span>
-            </a>
-            <a
-              href="#que-es"
-              className="border-2 border-white/20 text-white px-8 py-4 rounded-full font-semibold text-lg text-center hover:bg-white/10 transition-all duration-200 backdrop-blur-sm active:scale-[0.98]"
-            >
-              Conocé más ↓
-            </a>
-          </div>
+          <a
+            href="#que-es"
+            className="inline-flex items-center gap-2 text-white/50 hover:text-white/80 transition-colors duration-200 text-sm font-medium mt-2"
+          >
+            Conocé más <span>↓</span>
+          </a>
         </div>
       </div>
 
@@ -638,37 +627,6 @@ function Storage() {
   );
 }
 
-function CTA() {
-  return (
-    <section className="relative py-28 sm:py-36 overflow-hidden">
-      <div className="absolute inset-0 bg-brand-charcoal" />
-      <div className="absolute inset-0">
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-brand-orange/8 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-brand-orange/5 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 text-center">
-        <div className="text-6xl sm:text-7xl mb-8 animate-float">🐾</div>
-        <h2 className="text-4xl sm:text-5xl md:text-6xl font-display text-white mb-5 leading-tight">
-          Dale lo <span className="text-brand-orange italic">mejor</span>
-        </h2>
-        <p className="text-white/40 mb-12 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
-          Tu perro merece comida real. Escribinos por WhatsApp y empezá hoy.
-        </p>
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-[#25D366] hover:bg-[#20bd5a] text-white px-10 py-5 rounded-full font-bold text-lg sm:text-xl transition-all duration-200 hover:scale-[1.02] shadow-2xl shadow-green-500/25 active:scale-[0.98]"
-        >
-          <WhatsAppIcon className="w-6 h-6" />
-          Escribinos por WhatsApp
-        </a>
-      </div>
-    </section>
-  );
-}
-
 function Footer() {
   return (
     <footer className="bg-brand-charcoal border-t border-white/5 py-8">
@@ -702,19 +660,8 @@ export default function Home() {
       <Ingredients />
       <FeedingGuide />
       <Storage />
-      <CTA />
       <Footer />
 
-      {/* Floating WhatsApp */}
-      <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 bg-[#25D366] hover:bg-[#20bd5a] text-white p-4 rounded-full shadow-2xl shadow-green-500/30 hover:scale-110 transition-all duration-200 active:scale-95"
-        aria-label="WhatsApp"
-      >
-        <WhatsAppIcon className="w-7 h-7" />
-      </a>
     </main>
   );
 }
