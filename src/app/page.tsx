@@ -179,18 +179,49 @@ function WhatIsGloty() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
-          {[
-            { icon: '🚫', title: 'No es balanceado', desc: 'No es un ultraprocesado como las croquetas tradicionales.' },
-            { icon: '🍳', title: 'Es comida real', desc: 'Ingredientes que podés reconocer, cocidos con cariño.' },
-            { icon: '🩺', title: 'Avalado por profesionales', desc: 'Formulado por nutricionistas veterinarios.' },
-          ].map((item, i) => (
-            <div key={i} className="group relative bg-brand-cream rounded-2xl p-8 text-center border border-brand-orange/0 hover:border-brand-orange/20 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/5">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-              <h3 className="font-display text-xl mb-2 text-brand-charcoal">{item.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+        {/* Product photo + feature cards */}
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="relative mx-auto max-w-sm md:max-w-none">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-brand-charcoal/10">
+              <Image
+                src="/product.jpg"
+                alt="Gloty — Pollo & Vegetales, alimento cocido natural para perros, 400g"
+                width={600}
+                height={900}
+                className="w-full h-auto object-cover"
+                quality={90}
+              />
             </div>
-          ))}
+          </div>
+          <div className="space-y-4">
+            {[
+              { icon: '🚫', title: 'No es balanceado', desc: 'No es un ultraprocesado como las croquetas tradicionales.' },
+              { icon: '🍳', title: 'Es comida real', desc: 'Ingredientes que podés reconocer, cocidos con cariño.' },
+              { icon: '🩺', title: 'Avalado por profesionales', desc: 'Formulado por nutricionistas veterinarios.' },
+            ].map((item, i) => (
+              <div key={i} className="group bg-brand-cream rounded-2xl p-6 border border-brand-orange/0 hover:border-brand-orange/20 transition-all duration-300 hover:shadow-lg hover:shadow-brand-orange/5 flex items-start gap-4">
+                <div className="text-3xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                <div>
+                  <h3 className="font-display text-lg mb-1 text-brand-charcoal">{item.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+            {/* Macro badges from packaging */}
+            <div className="grid grid-cols-4 gap-2 pt-2">
+              {[
+                { label: 'Proteína', value: '14%' },
+                { label: 'Grasa', value: '7%' },
+                { label: 'Carbos', value: '1.5%' },
+                { label: 'Humedad', value: '68-72%' },
+              ].map((m) => (
+                <div key={m.label} className="text-center bg-white rounded-xl p-3 border border-brand-orange/10">
+                  <div className="text-brand-orange font-bold text-lg">{m.value}</div>
+                  <div className="text-[10px] text-gray-400 uppercase tracking-wider font-medium">{m.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
