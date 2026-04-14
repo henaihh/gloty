@@ -7,6 +7,8 @@
 :root {
   --brand-orange: #F07830;
   --brand-cream: #FAF6F0;
+  --brand-charcoal: #2f241d;
+  --brand-warm: #8c6a4f;
 }
 
 html {
@@ -17,12 +19,18 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--brand-cream);
+  background:
+    radial-gradient(circle at top left, rgba(240, 120, 48, 0.08), transparent 22%),
+    linear-gradient(180deg, #fbf5ec 0%, #fffaf4 100%);
   color: #2D2D2D;
 }
 
 h1, h2, h3, .font-display {
   font-family: 'DM Serif Display', Georgia, serif;
+}
+
+.section-anchor {
+  scroll-margin-top: 6.5rem;
 }
 
 /* Animations */
