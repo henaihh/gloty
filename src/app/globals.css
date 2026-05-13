@@ -1,13 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=DM+Serif+Display:ital@0;1&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --brand-orange: #F07830;
-  --brand-cream: #FAF6F0;
-  --brand-charcoal: #2f241d;
+  --brand-orange: #E8722C;
+  --brand-orange-dark: #C85A1E;
+  --brand-cream: #FAF5EC;
+  --brand-charcoal: #2B1810;
+  --brand-dark: #3A1F0F;
   --brand-warm: #8c6a4f;
 }
 
@@ -19,9 +21,7 @@ html {
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(240, 120, 48, 0.08), transparent 22%),
-    linear-gradient(180deg, #fbf5ec 0%, #fffaf4 100%);
+  background: #FAF5EC;
   color: #2D2D2D;
 }
 
@@ -29,55 +29,20 @@ h1, h2, h3, .font-display {
   font-family: 'DM Serif Display', Georgia, serif;
 }
 
+.font-script {
+  font-family: 'Caveat', cursive;
+}
+
 .section-anchor {
   scroll-margin-top: 6.5rem;
 }
 
-/* Animations */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Selection */
 ::selection {
-  background: rgba(240, 120, 48, 0.15);
-  color: #2D2D2D;
+  background: rgba(232, 114, 44, 0.18);
+  color: #2B1810;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(240, 120, 48, 0.2);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(240, 120, 48, 0.35);
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(232, 114, 44, 0.26); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232, 114, 44, 0.42); }

@@ -10,18 +10,18 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          orange: '#F07830',
-          'orange-dark': '#D4621A',
-          'orange-light': '#F5A060',
-          cream: '#FAF6F0',
-          'cream-dark': '#E8E2D8',
-          charcoal: '#2D2D2D',
-          warm: '#8B7355',
-        }
+          orange: "#E8722C",
+          "orange-dark": "#C85A1E",
+          cream: "#FAF5EC",
+          charcoal: "#2B1810",
+          dark: "#3A1F0F",
+          warm: "#8C6A4F",
+        },
       },
       fontFamily: {
-        display: ['Georgia', 'serif'],
-        body: ['system-ui', '-apple-system', 'sans-serif'],
+        display: ["DM Serif Display", "Georgia", "serif"],
+        script: ["Caveat", "cursive"],
+        body: ["Inter", "system-ui", "-apple-system", "sans-serif"],
       },
     },
   },
